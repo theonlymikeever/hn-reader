@@ -5,7 +5,7 @@ import StoryItem from './StoryItem';
 class StoryList extends React.Component {
   componentDidMount() {
     this.props.fetch()
-    // setInterval(this.props.fetch, 10000)
+    // setInterval(this.props.fetch, 15000)
   }
 
   render(){

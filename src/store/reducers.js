@@ -9,13 +9,16 @@ const initialState = {
 export default function(state = initialState, action) {
   switch (action.type) {
     case FETCH_SINGLE_STORY:
-      return [...state.stories, action.story];
+      return {
+        ...state,
+        stories: [action.story, ...state.stories]
+      };
 
     case FETCH_STORIES:
       return {
         ...state,
         fetchedStories: [
-          ...action.stories.filter(story => !state.fetchedStories.includes(story)), // will improve efficiency
+          ...action.stories, // will improve efficiency
           ...state.fetchedStories
         ]
       };
