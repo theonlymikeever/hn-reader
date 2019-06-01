@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import StoryList from './components/StoryList';
 
 function App() {
   return (
@@ -9,6 +10,7 @@ function App() {
           HN Reader
         </h1>
         <p>a mobile friendly hacker news feed</p>
+        <StoryList />
       </header>
     </div>
   );
