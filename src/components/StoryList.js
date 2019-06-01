@@ -1,10 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux';
-import { fetchStories } from '../store/actions';
+import { fetchStoriesFromApi } from '../store/actions';
 import StoryItem from './StoryItem';
 class StoryList extends React.Component {
   componentDidMount() {
     this.props.fetch()
+    // setInterval(this.props.fetch, 10000)
   }
 
   render(){
@@ -24,7 +25,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetch: () => dispatch(fetchStories())
+    fetch: () => dispatch(fetchStoriesFromApi())
   }
 }
 

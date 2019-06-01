@@ -2,7 +2,8 @@ import { FETCH_SINGLE_STORY, FETCH_STORIES } from './actions';
 
 const initialState = {
   isFetching: false,
-  stories: []
+  stories: [],
+  fetchedStories: []
 };
 
 export default function(state = initialState, action) {
@@ -13,9 +14,9 @@ export default function(state = initialState, action) {
     case FETCH_STORIES:
       return {
         ...state,
-        stories: [
-          ...action.stories.filter(story => state.stories.indexOf(story) < 0),
-          ...state.stories
+        fetchedStories: [
+          ...action.stories.filter(story => !state.fetchedStories.includes(story)), // will improve efficiency
+          ...state.fetchedStories
         ]
       };
 
