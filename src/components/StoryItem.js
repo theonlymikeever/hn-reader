@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 const StoryItem = ({ title, author, timeStamp, link, score }) => {
   return (
-    <div class="story-item">
+    <div className="story-item">
       <a href={link}>{title}</a>
       <span>{score} points</span> by: {author} on: {timeStamp}
     </div>
