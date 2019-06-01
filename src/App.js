@@ -1,17 +1,17 @@
 import React from 'react';
-import './App.css';
+import './App.scss';
 import StoryList from './components/StoryList';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
+    <div className="app">
+      <header className="header">
         <h1>
           HN Reader
         </h1>
         <p>a mobile friendly hacker news feed</p>
-        <StoryList />
       </header>
+      <StoryList />
     </div>
   );
 }

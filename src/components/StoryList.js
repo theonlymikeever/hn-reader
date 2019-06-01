@@ -26,12 +26,10 @@ const testDate = [
 ]
 
 const StoryList = () => (
-    <div>
-      <ul className="story-list">
+    <div className="story-list">
         {
           testDate.map(story => <StoryItem key ={story.id} {...story} />)
         }
-      </ul>
     </div>
   )
 

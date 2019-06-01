@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 
 function StoryItem({ title, author, timeStamp, link }) {
   return (
-    <li>
+    <div class="story-item">
       <a href={link}>Title: {title}</a> <br />by: {author} on: {timeStamp}
-    </li>
+    </div>
   );
 }
 
