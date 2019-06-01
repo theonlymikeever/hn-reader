@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function StoryItem({ title, author, timeStamp, link }) {
+const StoryItem = ({ title, author, timeStamp, link, score }) => {
   return (
     <div class="story-item">
-      <a href={link}>Title: {title}</a> <br />by: {author} on: {timeStamp}
+      <a href={link}>{title}</a>
+      <span>{score} points</span> by: {author} on: {timeStamp}
     </div>
   );
 }
@@ -14,7 +15,8 @@ StoryItem.propTypes = {
   title: PropTypes.string,
   link: PropTypes.string,
   author: PropTypes.string,
-  timeStamp: PropTypes.number
+  timeStamp: PropTypes.number,
+  score: PropTypes.number
 };
 
 export default StoryItem;
