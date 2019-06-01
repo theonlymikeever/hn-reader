@@ -1,7 +1,7 @@
 import React from 'react'
 import StoryItem from './StoryItem';
 
-const testDate = [
+const testData = [
   {
     id: 123,
     title: 'The house that\'s haunted',
@@ -28,13 +28,29 @@ const testDate = [
   },
 ]
 
-const StoryList = () => (
-    <div className="story-list">
-        {
-          testDate.map(story => <StoryItem key ={story.id} {...story} />)
-        }
-    </div>
-  )
+class StoryList extends React.Component {
+  constructor(props){
+    super(props)
+    this.state = {
+      stories: testData, // Initial testing
+      isLoading: false,
+    }
+  }
+
+  fetchStories = () => {
+
+  }
+
+  render(){
+    return (
+      <div className="story-list">
+          {
+            this.state.stories.map(story => <StoryItem key ={story.id} {...story} />)
+          }
+      </div>
+    )
+  }
+}
 
 export default StoryList
 
