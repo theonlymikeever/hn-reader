@@ -1,13 +1,15 @@
 import { combineReducers } from 'redux'
-import { RECEIVE_STORIES, REQUEST_STORIES } from './actions';
+import { RECEIVE_STORIES, REQUEST_STORIES, CACHE_STORIES } from './actions';
 
 
 const createList = filter => {
   const ids = (state = [], action) => {
     if (action.filter !== filter) return state;
     switch (action.type) {
+      case CACHE_STORIES:
+          return action.response
       case RECEIVE_STORIES:
-          return action.response.map(story => story.id);
+          return [...state, ...action.response.map(story => story.id)];
       default:
           return state;
     }

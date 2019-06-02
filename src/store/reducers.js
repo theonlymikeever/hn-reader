@@ -13,7 +13,7 @@ const stories = combineReducers({
   listByFilter
 });
 
-export const getVisibleStories = (state, filter) => {
+export const getStoriesByFilter = (state, filter) => {
   const ids = fromList.getIds(state.listByFilter[filter]);
   return ids.map(id => fromById.getStory(state.storyById, id));
 };

@@ -1,13 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  fetchStoriesFromApi, requestStories
+  fetchStoriesFromApi, requestStories, fetchOlderStoriesFromApi
 } from '../store/actions';
-import { getIsFetching, getVisibleStories } from '../store/reducers'
+import { getIsFetching, getStoriesByFilter } from '../store/reducers'
 import StoryItem from './StoryItem';
 class StoryList extends React.Component {
   componentDidMount() {
-    // this.props.getStories()
     this.fetchData();
     // setInterval(this.props.getStories, 15000)
   }
@@ -21,12 +20,21 @@ class StoryList extends React.Component {
   fetchData() {
     const { filter, fetchStoriesFromApi, requestStories } = this.props;
     requestStories(filter);
-    fetchStoriesFromApi(filter);
-    ///e
-    // fetchStoriesFromApi(filter).then(stories => {
-    //   getStories(filter, stories);
-    // });
+    fetchStoriesFromApi(filter, true);
   }
+
+  fetchOld = () => {
+    const { fetchOldStories, requestStories } = this.props;
+    let filter = 'all';
+    requestStories(filter);
+    fetchOldStories(filter)
+  }
+  // fetchNew() {
+  //   const { fetchStoriesFromApi, requestStories } = this.props;
+  //   let filter = 'new';
+  //   requestStories(filter);
+  //   fetchStoriesFromApi(filter)
+  // }
 
   render() {
     const { isFetching, stories } = this.props;
@@ -39,6 +47,7 @@ class StoryList extends React.Component {
         {this.props.stories.map(story => (
           <StoryItem key={story.id} {...story} />
         ))}
+        <button onClick={this.fetchOld}>Old</button>
       </div>
     );
   }
@@ -47,9 +56,9 @@ class StoryList extends React.Component {
 const mapStateToProps = state => {
   // need to manage scrolling state. If scrolling filter = old, if periodic filter = new
   // for now well display all
-  const filter = 'all';
+  const filter = 'visible';
   return {
-    stories: getVisibleStories(state, filter),
+    stories: getStoriesByFilter(state, filter),
     isFetching: getIsFetching(state, filter),
     filter
   };
@@ -58,7 +67,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     requestStories: (filter) => dispatch(requestStories(filter)),
-    fetchStoriesFromApi: (filter) => dispatch(fetchStoriesFromApi(filter)),
+    fetchStoriesFromApi: (filter, firstLoad) => dispatch(fetchStoriesFromApi(filter, firstLoad)),
+    fetchOldStories: (filter) => dispatch(fetchOlderStoriesFromApi(filter))
   };
 };
 
