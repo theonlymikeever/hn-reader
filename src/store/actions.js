@@ -1,25 +1,27 @@
 import axios from 'axios';
 
-export const GET_STORIES = 'GET_STORIES';
-export const FETCH_STORIES_FROM_API = 'FETCH_STORIES_FROM_API';
+export const RECEIVE_STORIES = 'RECEIVE_STORIES';
+export const REQUEST_STORIES = 'REQUEST_STORIES';
 export const FETCH_SINGLE_STORY = 'FETCH_SINGLE_STORY';
 
 const baseURL = 'https://hacker-news.firebaseio.com/v0';
 
-export const fetchStoriesFromApi = () => {
+export const fetchStoriesFromApi = filter => {
   return (dispatch, getState) => {
-    dispatch({ type: FETCH_STORIES_FROM_API })
-     axios
+    return axios
       .get(`${baseURL}/newstories.json?print=pretty`)
       .then(res => res.data)
       .then(data => {
-        let { fetchedStories } = getState();
-        let newStories = data.slice(0, 10).filter(id => !fetchedStories.includes(id)); // 10 while testing
+        let newStories = data.slice(0, 10); // 10 while testing
         // let newStories = data.filter(id => !fetchedStories.includes(id));
-        if (newStories.length)  {
-          dispatch(getStories(newStories));
-          Promise.all(newStories.map(id => dispatch(fetchSingleStoryFromApi(id))));
+        if (newStories.length) {
+          return Promise.all(
+            newStories.map(id => dispatch(fetchSingleStoryFromApi(id)))
+          );
         }
+      })
+      .then(res => {
+        dispatch(receiveStories(filter, res));
       })
       .catch(console.log);
   };
@@ -27,24 +29,29 @@ export const fetchStoriesFromApi = () => {
 
 export const fetchSingleStoryFromApi = id => {
   return dispatch => {
-    axios
+    return axios
       .get(`${baseURL}/item/${id}.json?print=pretty`)
       .then(res => res.data)
       .then(data => {
-        if (data && data.id) dispatch(fetchSingleStory(data))
-        // need to handle when nothing comes back
-        else return console.log('no data for', id, 'data:', data)
+        dispatch(fetchSingleStory(data));
+        return data;
       })
       .catch(console.log);
   };
 };
 
-export const getStories = fetchedStories => {
+export const receiveStories = (filter, response) => {
   return {
-    type: GET_STORIES,
-    fetchedStories
+    type: RECEIVE_STORIES,
+    filter,
+    response
   };
 };
+
+export const requestStories = filter => ({
+  type: REQUEST_STORIES,
+  filter
+});
 
 export const fetchSingleStory = story => {
   return {

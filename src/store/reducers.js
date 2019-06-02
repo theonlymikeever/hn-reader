@@ -1,29 +1,25 @@
-import { FETCH_SINGLE_STORY, GET_STORIES } from './actions';
+import { combineReducers } from 'redux';
+import storyById, * as fromById from './byId';
+import createList, * as fromList from './createList';
 
-const initialState = {
-  isFetching: false,
-  stories: [],
-  fetchedStories: []
+const listByFilter = combineReducers({
+  all: createList('all'),
+  visible: createList('visible'),
+  newStories: createList('new')
+});
+
+const stories = combineReducers({
+  storyById,
+  listByFilter
+});
+
+export const getVisibleStories = (state, filter) => {
+  const ids = fromList.getIds(state.listByFilter[filter]);
+  return ids.map(id => fromById.getStory(state.storyById, id));
 };
 
-export default function(state = initialState, action) {
-  switch (action.type) {
-    case FETCH_SINGLE_STORY:
-      return {
-        ...state,
-        stories: [action.story, ...state.stories]
-      };
+export const getIsFetching = (state, filter) => {
+  return fromList.getIsFetching(state.listByFilter[filter]);
+};
 
-    case GET_STORIES:
-      return {
-        ...state,
-        fetchedStories: [
-          ...action.fetchedStories,
-          ...state.fetchedStories
-        ]
-      };
-
-    default:
-      return state;
-  }
-}
+export default stories;
