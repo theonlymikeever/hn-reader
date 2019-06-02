@@ -1,4 +1,4 @@
-import { FETCH_SINGLE_STORY, FETCH_STORIES } from './actions';
+import { FETCH_SINGLE_STORY, GET_STORIES } from './actions';
 
 const initialState = {
   isFetching: false,
@@ -14,11 +14,11 @@ export default function(state = initialState, action) {
         stories: [action.story, ...state.stories]
       };
 
-    case FETCH_STORIES:
+    case GET_STORIES:
       return {
         ...state,
         fetchedStories: [
-          ...action.stories, // will improve efficiency
+          ...action.fetchedStories,
           ...state.fetchedStories
         ]
       };
