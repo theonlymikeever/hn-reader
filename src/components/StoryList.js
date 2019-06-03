@@ -27,7 +27,7 @@ class StoryList extends React.Component {
   fetchOld = () => {
     const { fetchOldStories, requestStories, isFetching } = this.props;
     if (isFetching) return; // stop a user from over fetching
-    let filter = 'all';
+    const filter = 'all';
     requestStories(filter);
     fetchOldStories(filter);
   };
@@ -54,13 +54,15 @@ class StoryList extends React.Component {
           {stories &&
             stories.map(story => <StoryItem key={story.id} {...story} />)}
         </div>
-        {isFetching ? <p>Loading more stories</p> : null}
+        {isFetching ? <p className="loading">Loading more stories</p> : null}
       </>
     );
   }
 }
 
 const mapStateToProps = state => {
+  // In future versions, we can easily change filter to different types of stories
+  // such as ask and show, and update this with router params or onClick handlers
   const filter = 'visible';
   return {
     stories: getStoriesByFilter(state, filter),
@@ -81,3 +83,5 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(StoryList);
+
+

@@ -6,6 +6,8 @@ import {
   RECEIVE_NEW_STORIES
 } from './actions';
 
+// Create list returns the current list of ids for both active stories (visible)
+// as well as all cache stories (all), while handling pre-pending of new stories
 const createList = filter => {
   const ids = (state = [], action) => {
     if (action.filter !== filter) return state;
@@ -41,5 +43,7 @@ const createList = filter => {
 };
 
 export default createList;
+
+// Constants below allow us to quickly access the state inside `getStoriesByFilter`
 export const getIds = state => state.ids;
 export const getIsFetching = state => state.isFetching;
