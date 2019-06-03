@@ -8,7 +8,7 @@ import StoryItem from './StoryItem';
 class StoryList extends React.Component {
   componentDidMount() {
     this.fetchData();
-    // setInterval(this.props.getStories, 15000)
+    setInterval(this.fetchData, 5000)
   }
 
   componentDidUpdate(prevProps) {
@@ -17,10 +17,9 @@ class StoryList extends React.Component {
     }
   }
 
-  fetchData() {
-    const { filter, fetchStoriesFromApi, requestStories } = this.props;
-    requestStories(filter);
-    fetchStoriesFromApi(filter, true);
+  fetchData = () => {
+    const { filter, fetchStoriesFromApi } = this.props;
+    fetchStoriesFromApi(filter);
   }
 
   fetchOld = () => {
@@ -29,12 +28,6 @@ class StoryList extends React.Component {
     requestStories(filter);
     fetchOldStories(filter)
   }
-  // fetchNew() {
-  //   const { fetchStoriesFromApi, requestStories } = this.props;
-  //   let filter = 'new';
-  //   requestStories(filter);
-  //   fetchStoriesFromApi(filter)
-  // }
 
   render() {
     const { isFetching, stories } = this.props;
@@ -44,9 +37,12 @@ class StoryList extends React.Component {
 
     return (
       <div className="story-list">
-        {this.props.stories.map(story => (
+        {stories && stories.map(story => (
           <StoryItem key={story.id} {...story} />
         ))}
+        {
+          isFetching ? (<p>Loading more stories</p>) : null
+        }
         <button onClick={this.fetchOld}>Old</button>
       </div>
     );
@@ -54,8 +50,6 @@ class StoryList extends React.Component {
 }
 
 const mapStateToProps = state => {
-  // need to manage scrolling state. If scrolling filter = old, if periodic filter = new
-  // for now well display all
   const filter = 'visible';
   return {
     stories: getStoriesByFilter(state, filter),
@@ -67,7 +61,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     requestStories: (filter) => dispatch(requestStories(filter)),
-    fetchStoriesFromApi: (filter, firstLoad) => dispatch(fetchStoriesFromApi(filter, firstLoad)),
+    fetchStoriesFromApi: (filter) => dispatch(fetchStoriesFromApi(filter)),
     fetchOldStories: (filter) => dispatch(fetchOlderStoriesFromApi(filter))
   };
 };

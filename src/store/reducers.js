@@ -5,7 +5,6 @@ import createList, * as fromList from './createList';
 const listByFilter = combineReducers({
   all: createList('all'),
   visible: createList('visible'),
-  newStories: createList('new')
 });
 
 const stories = combineReducers({
@@ -13,7 +12,7 @@ const stories = combineReducers({
   listByFilter
 });
 
-export const getStoriesByFilter = (state, filter) => {
+export const getStoriesByFilter = (state, filter = 'visible') => {
   const ids = fromList.getIds(state.listByFilter[filter]);
   return ids.map(id => fromById.getStory(state.storyById, id));
 };
