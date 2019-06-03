@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const StoryItem = ({ title, author, timeStamp, link, score }) => {
+const StoryItem = ({ title, by, time, url, score }) => {
   return (
-    <div class="story-item">
-      <a href={link}>{title}</a>
-      <span>{score} points</span> by: {author} on: {timeStamp}
+    <div className="story-item">
+      <a href={url}>{title}</a>
+      <span>{score} points</span> by: {by} on: {time}
     </div>
   );
 }
@@ -13,9 +13,9 @@ const StoryItem = ({ title, author, timeStamp, link, score }) => {
 StoryItem.propTypes = {
   id: PropTypes.number,
   title: PropTypes.string,
-  link: PropTypes.string,
-  author: PropTypes.string,
-  timeStamp: PropTypes.number,
+  url: PropTypes.string,
+  by: PropTypes.string,
+  time: PropTypes.number,
   score: PropTypes.number
 };
 

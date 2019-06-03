@@ -1,56 +1,72 @@
-import React from 'react'
+import React from 'react';
+import { connect } from 'react-redux';
+import {
+  fetchStoriesFromApi, requestStories, fetchOlderStoriesFromApi
+} from '../store/actions';
+import { getIsFetching, getStoriesByFilter } from '../store/reducers'
 import StoryItem from './StoryItem';
-
-const testData = [
-  {
-    id: 123,
-    title: 'The house that\'s haunted',
-    link: 'https://google.com',
-    author: 'Luigi',
-    timeStamp: new Date().getDate(),
-    score: 3445
-  },
-  {
-    id: 124,
-    title: 'Plumbing troubles in Mushroom Kingdom',
-    link: 'https://facebook.com',
-    author: 'Mario',
-    timeStamp: new Date().getDate(),
-    score: 223
-  },
-  {
-    id: 125,
-    title: 'The Art of Beerio-cart',
-    link: 'https://news.ycombinator.com/',
-    author: 'Peach',
-    timeStamp: new Date().getDate(),
-    score: 4563
-  },
-]
-
 class StoryList extends React.Component {
-  constructor(props){
-    super(props)
-    this.state = {
-      stories: testData, // Initial testing
-      isLoading: false,
+  componentDidMount() {
+    this.fetchData();
+    setInterval(this.fetchData, 5000)
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.filter !== prevProps.filter) {
+      this.fetchData();
     }
   }
 
-  fetchStories = () => {
-
+  fetchData = () => {
+    const { filter, fetchStoriesFromApi } = this.props;
+    fetchStoriesFromApi(filter);
   }
 
-  render(){
+  fetchOld = () => {
+    const { fetchOldStories, requestStories } = this.props;
+    let filter = 'all';
+    requestStories(filter);
+    fetchOldStories(filter)
+  }
+
+  render() {
+    const { isFetching, stories } = this.props;
+    if (isFetching && !stories.length) {
+      return <p>Loading...</p>;
+    }
+
     return (
       <div className="story-list">
-          {
-            this.state.stories.map(story => <StoryItem key ={story.id} {...story} />)
-          }
+        {stories && stories.map(story => (
+          <StoryItem key={story.id} {...story} />
+        ))}
+        {
+          isFetching ? (<p>Loading more stories</p>) : null
+        }
+        <button onClick={this.fetchOld}>Old</button>
       </div>
-    )
+    );
   }
 }
 
-export default StoryList
+const mapStateToProps = state => {
+  const filter = 'visible';
+  return {
+    stories: getStoriesByFilter(state, filter),
+    isFetching: getIsFetching(state, filter),
+    filter
+  };
+};
 
+const mapDispatchToProps = dispatch => {
+  return {
+    requestStories: (filter) => dispatch(requestStories(filter)),
+    fetchStoriesFromApi: (filter) => dispatch(fetchStoriesFromApi(filter)),
+    fetchOldStories: (filter) => dispatch(fetchOlderStoriesFromApi(filter))
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(StoryList);
