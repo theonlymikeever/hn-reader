@@ -1,33 +1,46 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  fetchStoriesFromApi, requestStories, fetchOlderStoriesFromApi
+  fetchStoriesFromApi,
+  requestStories,
+  fetchOlderStoriesFromApi
 } from '../store/actions';
-import { getIsFetching, getStoriesByFilter } from '../store/reducers'
+import { getIsFetching, getStoriesByFilter } from '../store/reducers';
 import StoryItem from './StoryItem';
 class StoryList extends React.Component {
   componentDidMount() {
+    // Once mounted we'll grab the initial data
     this.fetchData();
-    setInterval(this.fetchData, 5000)
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.filter !== prevProps.filter) {
-      this.fetchData();
-    }
+    // We'll periodically check for new stories ever 5s
+    setInterval(this.fetchData, 5000);
+    // Then we'll bind our handleScroll to create an infinite scroll
+    this.scrollListener = window.addEventListener('scroll', e =>
+      this.handleScroll(e)
+    );
   }
 
   fetchData = () => {
     const { filter, fetchStoriesFromApi } = this.props;
     fetchStoriesFromApi(filter);
-  }
+  };
 
   fetchOld = () => {
-    const { fetchOldStories, requestStories } = this.props;
+    const { fetchOldStories, requestStories, isFetching } = this.props;
+    if (isFetching) return; // stop a user from over fetching
     let filter = 'all';
     requestStories(filter);
-    fetchOldStories(filter)
-  }
+    fetchOldStories(filter);
+  };
+
+  handleScroll = () => {
+    // To create an infinite scroll we'll look at the last story item and bottom
+    // of the page - if a user scrolls beyond this point the offset will be
+    // larger and we'll trigger a fetch of the older stories
+    const lastStory = document.querySelector('.story-list > div:last-child');
+    const lastStoryOffset = lastStory.offsetTop + lastStory.clientHeight;
+    const pageOffset = window.pageYOffset + window.innerHeight;
+    if (pageOffset > lastStoryOffset) this.fetchOld();
+  };
 
   render() {
     const { isFetching, stories } = this.props;
@@ -36,15 +49,13 @@ class StoryList extends React.Component {
     }
 
     return (
-      <div className="story-list">
-        {stories && stories.map(story => (
-          <StoryItem key={story.id} {...story} />
-        ))}
-        {
-          isFetching ? (<p>Loading more stories</p>) : null
-        }
-        <button onClick={this.fetchOld}>Old</button>
-      </div>
+      <>
+        <div className="story-list">
+          {stories &&
+            stories.map(story => <StoryItem key={story.id} {...story} />)}
+        </div>
+        {isFetching ? <p>Loading more stories</p> : null}
+      </>
     );
   }
 }
@@ -60,9 +71,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    requestStories: (filter) => dispatch(requestStories(filter)),
-    fetchStoriesFromApi: (filter) => dispatch(fetchStoriesFromApi(filter)),
-    fetchOldStories: (filter) => dispatch(fetchOlderStoriesFromApi(filter))
+    requestStories: filter => dispatch(requestStories(filter)),
+    fetchStoriesFromApi: filter => dispatch(fetchStoriesFromApi(filter)),
+    fetchOldStories: filter => dispatch(fetchOlderStoriesFromApi(filter))
   };
 };
 

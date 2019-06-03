@@ -21,7 +21,7 @@ export const fetchStoriesFromApi = filter => {
         if (data && firstLoad) {
           dispatch(cacheStories('all', data)); // cache ids for older
           return Promise.all(
-            data.slice(0, 10).map(id => dispatch(fetchSingleStoryFromApi(id)))
+            data.slice(0, 30).map(id => dispatch(fetchSingleStoryFromApi(id)))
           );
         } else if (data) {
           let newStories = data.filter(id => !allIds.includes(id));
