@@ -10,7 +10,7 @@ const StoryItem = ({ title, by, time, url, score }) => {
   return (
     <div className="story-item">
       <a href={url}>{title}</a>
-      <span>{score} points</span> by: {by} {formatTime(time)}
+      <span>{score} point{score > 1 ? 's' : null}</span> by: {by} {formatTime(time)}
     </div>
   );
 }
