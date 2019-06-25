@@ -7,6 +7,20 @@ import {
 } from '../store/actions';
 import { getIsFetching, getStoriesByFilter } from '../store/reducers';
 import StoryItem from './StoryItem';
+
+function debounce(func, wait) {
+  let timeout
+  return function(...args) {
+    const context = this;
+    let later = function(){
+      timeout = null;
+      func.apply(context, args);
+    }
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  }
+}
+
 class StoryList extends React.Component {
   componentDidMount() {
     // Once mounted we'll grab the initial data
@@ -14,9 +28,7 @@ class StoryList extends React.Component {
     // We'll periodically check for new stories ever 5s
     setInterval(this.fetchData, 5000);
     // Then we'll bind our handleScroll to create an infinite scroll
-    this.scrollListener = window.addEventListener('scroll', e =>
-      this.handleScroll(e)
-    );
+    this.scrollListener = window.addEventListener('scroll', e => this.handleScroll(e));
   }
 
   fetchData = () => {
@@ -29,7 +41,8 @@ class StoryList extends React.Component {
     if (isFetching) return; // stop a user from over fetching
     const filter = 'all';
     requestStories(filter);
-    fetchOldStories(filter);
+    let delayedFetchOldStories = debounce(fetchOldStories, 3000);
+    delayedFetchOldStories(filter);
   };
 
   handleScroll = () => {
