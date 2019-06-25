@@ -15,9 +15,9 @@ const createList = filter => {
       case CACHE_STORIES:
         return [...state, ...action.response];
       case RECEIVE_STORIES:
-        return [...state, ...action.response.map(story => story.id)];
+        return [...state, action.response.id];
       case RECEIVE_NEW_STORIES:
-        return [...action.response.map(story => story.id), ...state];
+        return [action.response.id, ...state];
       default:
         return state;
     }
