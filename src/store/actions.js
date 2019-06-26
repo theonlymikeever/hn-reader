@@ -52,11 +52,15 @@ export const fetchOlderStoriesFromApi = () => {
       if (!storyById[allIds[idx]]) next.push(allIds[idx]);
       idx++;
     }
-    return next.forEach(id =>
-      dispatch(fetchSingleStoryFromApi(id)).then(story =>
-        dispatch(receiveStories('visible', story))
-      )
-    );
+    // TODO: Add a state change & FE visual for hitting the end of the old stories array
+    if (next.length) {
+      return next.forEach(id =>
+        dispatch(fetchSingleStoryFromApi(id)).then(story => {
+          // Need to ensure a story obj was returned (its possible an old story is deleted/removed)
+          if (story) dispatch(receiveStories('visible', story))
+        })
+      );
+    }
   };
 };
 
