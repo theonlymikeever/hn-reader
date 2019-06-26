@@ -1,4 +1,4 @@
-import { RECEIVE_STORIES, RECEIVE_NEW_STORIES} from './actions';
+import { RECEIVE_STORY, RECEIVE_NEW_STORIES} from './actions';
 
 // Ideally this needs to be improved to a more DRY implementation
 // storyById will create a shallow copy of the state and then insert
@@ -7,7 +7,7 @@ const storyById = (state = {}, action) => {
   const nextState = {...state};
   let story;
   switch(action.type){
-    case RECEIVE_STORIES:
+    case RECEIVE_STORY:
         story = action.response;
         nextState[story.id] = story
         return nextState;

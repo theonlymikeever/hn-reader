@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const RECEIVE_STORIES = 'RECEIVE_STORIES';
+export const RECEIVE_STORY = 'RECEIVE_STORY';
 export const RECEIVE_NEW_STORIES = 'RECEIVE_NEW_STORIES';
 export const CACHE_STORIES = 'CACHE_STORIES';
 export const REQUEST_STORIES = 'REQUEST_STORIES';
@@ -32,7 +32,7 @@ export const fetchStoriesFromApi = filter => {
             dispatch(cacheStories('all', newStories));
             return newStories.forEach(id =>
               dispatch(fetchSingleStoryFromApi(id)).then(story => {
-                dispatch(receiveNewStories(filter, story));
+                if (story) dispatch(receiveNewStories(filter, story));
               })
             );
           }
@@ -66,7 +66,7 @@ export const fetchSingleStoryFromApi = id => {
       .get(`${baseURL}/item/${id}.json?print=pretty`)
       .then(res => res.data)
       .then(data => {
-        if (data.id) {
+        if (data && data.id) {
           dispatch(fetchSingleStory(data));
           return data;
         }
@@ -77,7 +77,7 @@ export const fetchSingleStoryFromApi = id => {
 
 export const receiveStories = (filter, response) => {
   return {
-    type: RECEIVE_STORIES,
+    type: RECEIVE_STORY,
     filter,
     response
   };
