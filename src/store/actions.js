@@ -29,12 +29,12 @@ export const fetchStoriesFromApi = filter => {
         } else if (data) {
           let newStories = data.filter(id => !allIds.includes(id));
           if (newStories.length) {
-            dispatch(cacheStories('all', newStories));
-            return newStories.forEach(id =>
+            newStories.forEach(id =>
               dispatch(fetchSingleStoryFromApi(id)).then(story => {
                 if (story) dispatch(receiveNewStories(filter, story));
               })
             );
+           return dispatch(cacheStories('all', newStories));
           }
         }
       })
@@ -57,7 +57,7 @@ export const fetchOlderStoriesFromApi = () => {
       return next.forEach(id =>
         dispatch(fetchSingleStoryFromApi(id)).then(story => {
           // Need to ensure a story obj was returned (its possible an old story is deleted/removed)
-          if (story) dispatch(receiveStories('visible', story))
+          if (story) dispatch(receiveStories('visible', story));
         })
       );
     }

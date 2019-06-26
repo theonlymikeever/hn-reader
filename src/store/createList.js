@@ -13,7 +13,10 @@ const createList = filter => {
     if (action.filter !== filter) return state;
     switch (action.type) {
       case CACHE_STORIES:
-        return [...state, ...action.response];
+        return [
+          ...state,
+          ...action.response.filter(id => !state.includes(id))
+        ];
       case RECEIVE_STORY:
         return [...state, action.response.id];
       case RECEIVE_NEW_STORIES:
