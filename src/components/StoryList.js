@@ -7,19 +7,7 @@ import {
 } from '../store/actions';
 import { getIsFetching, getStoriesByFilter } from '../store/reducers';
 import StoryItem from './StoryItem';
-
-function debounce(func, wait) {
-  let timeout
-  return function(...args) {
-    const context = this;
-    let later = function(){
-      timeout = null;
-      func.apply(context, args);
-    }
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  }
-}
+import { debounce } from '../Utils';
 
 class StoryList extends React.Component {
   componentDidMount() {

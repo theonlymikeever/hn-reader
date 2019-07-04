@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import moment from 'moment';
 import storyById, * as fromById from './byId';
 import createList, * as fromList from './createList';
 
@@ -7,9 +8,10 @@ const listByFilter = combineReducers({
   visible: createList('visible'),
 });
 
-const stories = combineReducers({
+const reducer = combineReducers({
   storyById,
-  listByFilter
+  listByFilter,
+  _createdDate: (timeStamp = moment()) => timeStamp
 });
 
 // getStoriesByFilter will becomes more flexible once we introduce
@@ -24,4 +26,4 @@ export const getIsFetching = (state, filter) => {
   return fromList.getIsFetching(state.listByFilter[filter]);
 };
 
-export default stories;
+export default reducer;
