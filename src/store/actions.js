@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const RECEIVE_STORIES = 'RECEIVE_STORIES';
+export const RECEIVE_STORY = 'RECEIVE_STORY';
 export const RECEIVE_NEW_STORIES = 'RECEIVE_NEW_STORIES';
 export const CACHE_STORIES = 'CACHE_STORIES';
 export const REQUEST_STORIES = 'REQUEST_STORIES';
@@ -20,24 +20,22 @@ export const fetchStoriesFromApi = filter => {
       .then(data => {
         if (data && firstLoad) {
           dispatch(cacheStories('all', data)); // cache ids for older
-          return Promise.all(
-            data.slice(0, 30).map(id => dispatch(fetchSingleStoryFromApi(id)))
+          return data.slice(0, 30).forEach(id =>
+            dispatch(fetchSingleStoryFromApi(id)).then(story => {
+              if (firstLoad && story) dispatch(receiveStories(filter, story));
+              else if (story) dispatch(receiveNewStories(filter, story));
+            })
           );
         } else if (data) {
           let newStories = data.filter(id => !allIds.includes(id));
           if (newStories.length) {
-            dispatch(cacheStories('all', newStories));
-            return Promise.all(
-              newStories.map(id => dispatch(fetchSingleStoryFromApi(id)))
+            newStories.forEach(id =>
+              dispatch(fetchSingleStoryFromApi(id)).then(story => {
+                if (story) dispatch(receiveNewStories(filter, story));
+              })
             );
+           return dispatch(cacheStories('all', newStories));
           }
-        }
-      })
-      .then(stories => {
-        if (firstLoad && stories) {
-          dispatch(receiveStories(filter, stories));
-        } else if (stories) {
-          dispatch(receiveNewStories(filter, stories));
         }
       })
       .catch(console.log);
@@ -54,12 +52,15 @@ export const fetchOlderStoriesFromApi = () => {
       if (!storyById[allIds[idx]]) next.push(allIds[idx]);
       idx++;
     }
-    return Promise.all(
-      next.map(id => dispatch(fetchSingleStoryFromApi(id)))
-    ).then(res => {
-      let stories = res.filter(res => res);
-      dispatch(receiveStories('visible', stories));
-    });
+    // TODO: Add a state change & FE visual for hitting the end of the old stories array
+    if (next.length) {
+      return next.forEach(id =>
+        dispatch(fetchSingleStoryFromApi(id)).then(story => {
+          // Need to ensure a story obj was returned (its possible an old story is deleted/removed)
+          if (story) dispatch(receiveStories('visible', story));
+        })
+      );
+    }
   };
 };
 
@@ -69,7 +70,7 @@ export const fetchSingleStoryFromApi = id => {
       .get(`${baseURL}/item/${id}.json?print=pretty`)
       .then(res => res.data)
       .then(data => {
-        if (data.id) {
+        if (data && data.id) {
           dispatch(fetchSingleStory(data));
           return data;
         }
@@ -80,7 +81,7 @@ export const fetchSingleStoryFromApi = id => {
 
 export const receiveStories = (filter, response) => {
   return {
-    type: RECEIVE_STORIES,
+    type: RECEIVE_STORY,
     filter,
     response
   };
