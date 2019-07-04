@@ -3,6 +3,7 @@ import thunk from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 import reducer from './reducers';
 import { loadState, saveState } from './localStorage';
+import { throttle } from '../Utils';
 
 const logger = createLogger({ collapsed: true });
 
@@ -23,8 +24,8 @@ const store = createStore(
   composeEnhancers(applyMiddleware(...middleware))
 );
 
-store.subscribe(() => {
+store.subscribe(throttle(() => {
   saveState(store.getState());
-});
+}, 1000));
 
 export default store;
