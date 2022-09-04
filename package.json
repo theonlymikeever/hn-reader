@@ -6,12 +6,10 @@
     "axios": "^0.21.1",
     "express": "^4.17.1",
     "moment": "^2.29.4",
-    "node-sass": "^7.0.0",
     "prop-types": "^15.7.2",
-    "react": "^16.11.0",
+    "react": "17.0.0",
     "react-dom": "^16.11.0",
     "react-redux": "^7.1.1",
-    "react-scripts": "3.0.1",
     "redux": "^4.0.4",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0"
@@ -37,5 +35,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "sass": "^1.54.8",
+    "react-scripts": "5.0.1"
   }
 }
